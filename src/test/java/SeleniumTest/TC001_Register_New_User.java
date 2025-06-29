@@ -1,35 +1,30 @@
 package SeleniumTest;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.devtools.idealized.Javascript;
-import org.openqa.selenium.support.ui.ExpectedCondition;
+import BaseTest.BaseClass;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.Duration;
-import java.util.Objects;
+import java.util.Properties;
 
-public class LoginTest {
-    public static void main(String[] args) {
-        ChromeOptions option = new ChromeOptions();
-        option.addArguments("--headless");
-        option.setAcceptInsecureCerts(true);
-        WebDriver driver = new ChromeDriver(option);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+public class TC001_Register_New_User extends BaseClass {
+    public static void main(String[] args) throws IOException {
+        setup();
+        try {
+            driver.findElement(By.xpath("//a[@href='/login']")).click();
+        } catch (Exception e) {
+            System.out.println("It is taking more than expected time to load");
+        }
+        //create new user   D
         driver.manage().window().maximize();
-        driver.get("https://automationexercise.com/");
-
-        //create new user
-        driver.findElement(By.xpath("//a[@href='/login']")).click();
+        // driver.findElement(By.xpath("//a[@href='/login']")).click();
         //Enter Value
         driver.findElement(By.xpath("//input[@data-qa='signup-name']")).sendKeys("Tushar");
-        driver.findElement(By.xpath("//input[@data-qa='signup-email']")).sendKeys("8igciwwe@punkproof.com");
+        driver.findElement(By.xpath("//input[@data-qa='signup-email']")).sendKeys("8ilciww9@punkproof.com");
 
 
         driver.findElement(By.xpath("//button[@data-qa='signup-button']")).click();
@@ -56,12 +51,11 @@ public class LoginTest {
         Select sel_year = new Select(driver.findElement(By.id("years")));
         sel_year.selectByVisibleText("1991");
 
-      //lect The checkboxes
-
+        //lect The checkboxes
         WebElement checkboxes = driver.findElement(By.id("newsletter"));
-        if (!checkboxes.isSelected()) {
-            checkboxes.click();
-        }
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,500)");
+        js.executeScript("arguments[0].click();", checkboxes);
 
         WebElement Address_Message = driver.findElement(By.xpath("//b[text()='Address Information']"));
         String new_message = Address_Message.getText();
@@ -82,24 +76,33 @@ public class LoginTest {
         driver.findElement(By.id("zipcode")).sendKeys("100001");
         driver.findElement(By.id("mobile_number")).sendKeys("1234567890");
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,500)");
 
-
-
-        driver.findElement(By.xpath("//button[text()='Create Account']")).click();
+        WebElement createAccount = driver.findElement(By.xpath("//button[text()='Create Account']"));
+        js.executeScript("arguments[0].click();", createAccount);
         WebElement Success_Message = driver.findElement(By.xpath("//b"));
         String success = Success_Message.getText();
         System.out.println(success);
 
-        driver.quit();
+        driver.findElement(By.xpath("//a[text()='Continue']")).click();
+        FileInputStream fis = new FileInputStream(System.getProperty("user.dir") + "\\src\\test\\java\\JavaTest\\Browser.properties");
+        Properties prop = new Properties();
+        prop.load(fis);
+        String action = prop.getProperty("Action_item");
+
+        WebElement delete = driver.findElement(By.cssSelector("[href='/delete_account']"));
+        WebElement logout = driver.findElement(By.cssSelector("[href='/logout']"));
+        if (action.equalsIgnoreCase("delete")) {
+            delete.click();
+            String output_message = driver.findElement(By.xpath("//b")).getText();
+            System.out.println(output_message);
+        }
+
+        if (action.equalsIgnoreCase("logout")) {
+            logout.click();
+            String output_message = driver.findElement(By.cssSelector(".login-form")).getText();
+            System.out.println(output_message);
+        }
 
 
-
-
-
-
-
-
-
-}}
+    }
+}

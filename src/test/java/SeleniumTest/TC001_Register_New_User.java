@@ -103,6 +103,6 @@ public class TC001_Register_New_User extends BaseClass {
             System.out.println(output_message);
         }
 
-
+        driver.quit();
     }
 }

@@ -1,7 +1,11 @@
 package JavaTest;
 
+
+import org.testng.annotations.Test;
+
+@Test
 public class exceptionHandling {
-    public static void main(String[] args){
+
 
     }
-}
+
